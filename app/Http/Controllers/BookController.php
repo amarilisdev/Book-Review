@@ -20,22 +20,20 @@ class BookController extends Controller
             fn($query, $title) => $query->title($title)
         );
     
-        $books = Book::query();
-        
-        $books = match ($filter) {
-            'popular_last_month' => $books->popularLastMonth(),
-            'popular_last_6months' => $books->popularLast6Months(),
-            'highest_rated_last_month' => $books->highestRatedLastMonth(),
-            'highest_rated_last_6months' => $books->highestRatedLast6Months(),
-            default => $books->latest()
-        };
-        //$books = $books->get();
 
-        $cacheKey = 'books:' . $filter . ':' . $title;
-        $books = cache()->remember('cacheKey', 3600, fn() => $books->get());
+    $books = match ($filter) {
+        'popular_last_month' => $books->popularLastMonth(),
+        'popular_last_6months' => $books->popularLast6Months(),
+        'highest_rated_last_month' => $books->highestRatedLastMonth(),
+        'highest_rated_last_6months' => $books->highestRatedLast6Months(), 
+        default => $books->latest()
+    };
+
+    $cacheKey = 'books:' . $filter . ':' . $title;
+    $books = cache()->remember($cacheKey, 3600, fn() => $books->get());
            
 
-        return view('books.index', ['books' => $books]);
+    return view('books.index', ['books' => $books]);
     }
     /**
      * Show the form for creating a new resource.
