@@ -40,11 +40,16 @@
                         </div>
                         <div>
                             <div class="book-rating">
-                                {{ number_format($book->reviews->avg('rating'), 1) }} / 5
+                                <x-star-rating :rating="$book->reviews_avg_rating ?? $book->reviews()->avg('rating')" />
                             </div>
-                            <div class="book-review-count">
-                                out of {{ $book->review_count }} {{ Str::plural('review', $book->review_count) }}
-                            </div>
+                            <div class="book-reviews-count">
+                                <div class="book-reviews-count text-sm text-gray-500">
+                                    @php
+                                        // Usamos el total de reviews (todos, no solo filtrados)
+                                        $total = $book->reviews()->count();
+                                    @endphp
+                                    out of {{ $total }} {{ Str::plural('review', $total) }}
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -58,6 +63,7 @@
             </li>
         @endforelse
     </ul>
+    {{ $books->links() }}
 
 
 @endsection
